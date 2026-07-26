@@ -1,0 +1,30 @@
+Calculator Design
+
+Computation:
+    //  ["8", "-", "4", "+", "6"]
+    Use an array to store what's being computed.
+   
+    //  ["8", "+"]  =>  must not be (+, -, /, *)
+    If user presses an operation, check if the previous item is not an operator.
+      > > >  Block input if so.
+ 
+    //  ["99", "-", "3"]  => Concactenate 3, into "33"
+    If user enters a number and the previous item is a number, stack both numbers.
+   
+    //  ["34", "+", "−..."]
+    If user enters a Unicode Minus (−) the next input must be a number then append.
+    
+    //  ["12", "-", "..."]
+    Else if Hyphen Minus (-), the next input must be a number but create a new item.
+    
+    //  ["8", "+", "." or "0."] will work.
+    //  ["8", "+", "8. ..."] append "8" = "8.8"
+    Entering a period will append a number inputted, or skip with operations.
+    
+    Add functions that evaluate operations for solving, like checking what operation to execute e.g. (addition)
+    Prioritize multiplication/division then + and - for solving.
+    
+    //  ["8", "+", ("9", "*", "10"), "-", "18"]  =>
+        [("8", "+", "90"), "-", "18"] => 
+        [("98", "-", "18")] => "80"
+    Once finalized 3 indexes, collapse then return the result to the index.
