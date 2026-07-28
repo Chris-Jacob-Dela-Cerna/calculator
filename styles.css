@@ -20,8 +20,6 @@ body {
   }
 
   .calculator-container {
-    border: 1px solid grey;
-
     display: flex;
     align-items: center;
     flex: 5 0 360px;
@@ -54,10 +52,31 @@ body {
     }
 
     .input-panel {
+      display: flex;
+      flex: 0 0 5em;
+      justify-content: right;
+
       background-color: #3c3c3c;
       border-radius: 0 0 10px 10px;
       box-shadow: 1px 1px 2px #1a1a1a;
-      flex: 0 0 5em;
+      padding: 8px 8px 24px 8px;
+
+      #input {
+        flex: 1 1 0;
+
+        background-color: #3c3c3c;
+        border: none;
+        caret-color: #b9b9b9;
+        caret-shape: block;
+        color: #f6f6f6;
+        font-size: 24px;
+        min-width: 0;
+        text-align: right;
+      }
+      #input:focus {
+        border: 0;
+        outline: 0;
+      }
     }
   }
 
