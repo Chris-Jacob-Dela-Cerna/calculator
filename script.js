@@ -7,6 +7,17 @@ const input = document.getElementById("input");
 
 //  ---  Configs  ---
 
+const validKeys = [
+  "0", "1", "2", "3", "4", 
+  "5", "6", "7", "8", "9", 
+  ".", "*", "/", "+", "-",
+  "Delete",    "Backspace", 
+  "Enter",     "ArrowUp",
+  "ArrowLeft", "ArrowRight",
+];
+
+let inputCaretOffset = 0
+
 
 
 //  ---  History Panel  ---
@@ -20,12 +31,23 @@ input.addEventListener("keydown", event => {
 
   const key = event.key;
   const target = event.target;
-  const validKeys = [
-    "0", "1", "2", "3", "4", 
-    "5", "6", "7", "8", "9", 
-    ".", "*", "/", "+", "-"
-  ];
-  if (validKeys.includes(key)) target.value += key;
+
+  if (!validKeys.includes(key)) return; 
+  else if (["1"].includes(key)) {
+    target.value += "A sentence. ";
+    target.scrollLeft = target.scrollWidth
+  }
+  else if (key === "ArrowLeft") {
+    if (inputCaretOffset > target.value.length) inputCaretOffset = 1
+    else inputCaretOffset += 1
+  }
+  else if (key === "ArrowRight" && inputCaretOffset > 0) {
+    inputCaretOffset -= 1
+  }
+
+  let length = target.value.length
+  length -= inputCaretOffset
+  target.setSelectionRange(length, length)
 });
 
 
