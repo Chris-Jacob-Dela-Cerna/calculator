@@ -47,14 +47,16 @@ body {
 
     .history-panel {
       background-color: #484848;
-      border-bottom: 1px solid #171717;
+      border-bottom: 1px solid #222222;
       border-radius: 10px 10px 0 0;
+      box-shadow: 1px 1px 2px #1a1a1a;
       flex: 1 1 0;
     }
 
     .input-panel {
-      background-color: #3f3f3f;
+      background-color: #3c3c3c;
       border-radius: 0 0 10px 10px;
+      box-shadow: 1px 1px 2px #1a1a1a;
       flex: 0 0 5em;
     }
   }
@@ -76,9 +78,10 @@ body {
         flex: 0 0 3em;
 
         background-color: #3f3f3f;
-        color: #fdfdfd;
         border: 0;
         border-radius: 8px;
+        box-shadow: 1px 1px 2px #1a1a1a;
+        color: #fdfdfd;
         font-size: 16px;
         font-weight: 400;
       }
