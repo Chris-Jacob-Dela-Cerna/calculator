@@ -32,22 +32,25 @@ input.addEventListener("keydown", event => {
   const key = event.key;
   const target = event.target;
 
-  if (!validKeys.includes(key)) return; 
-  else if (["1"].includes(key)) {
-    target.value += "A sentence. ";
-    target.scrollLeft = target.scrollWidth
-  }
-  else if (key === "ArrowLeft") {
-    if (inputCaretOffset > target.value.length) inputCaretOffset = 1
-    else inputCaretOffset += 1
-  }
-  else if (key === "ArrowRight" && inputCaretOffset > 0) {
-    inputCaretOffset -= 1
+  if (!validKeys.includes(key)) {
+    return; 
+  } else if (key === "ArrowLeft") {
+    if (inputCaretOffset === target.value.length) {
+      inputCaretOffset = 0
+    } else inputCaretOffset += 1
+  } else if (key === "ArrowRight") {
+    if (inputCaretOffset === 0) {
+      inputCaretOffset = target.value.length
+    } else inputCaretOffset -= 1
+  } else if (["1"].includes(key)) {
+    target.value += key;
+    inputCaretOffset = 0
   }
 
   let length = target.value.length
   length -= inputCaretOffset
   target.setSelectionRange(length, length)
+  target.scrollLeft = target.scrollWidth
 });
 
 
