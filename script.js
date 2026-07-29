@@ -21,6 +21,7 @@ const buttonToKey = {
   "negative-button":  "_",
   "clear-all-button": "Delete",
   "clear-button":     "Backspace",
+  "answer-button":    "ArrowUp",
   "equal-button":     "Enter",
 };
 const inputKeys = [
@@ -38,6 +39,7 @@ const validKeys = [
 ];
 
 let inputCaretOffset = 0;
+let inputComputation = [];
 
 
 
@@ -54,34 +56,39 @@ input.addEventListener("keydown", event => {
   const target = event.target;
   let length = target.value.length  // Read length before conditionals
 
-  if (!validKeys.includes(key)) {
-    return;
-  } else if (inputKeys.includes(key)) {
-    target.value += key;
-    inputCaretOffset = 0;
-  } else {
-    switch (key) {
-      case "ArrowLeft":
-        if (inputCaretOffset === length) {
-          inputCaretOffset = 0;
-        } else {
-          inputCaretOffset += 1;
-        } break;
-      case "ArrowRight":
-        if (inputCaretOffset === 0) {
-          inputCaretOffset = length;
-        } else { 
-          inputCaretOffset -= 1;
-        } break;
-    };
+  if (!validKeys.includes(key)) return;
+
+  switch (key) {
+    case "ArrowLeft":
+      // Move caret leftwards or to the front
+      if (inputCaretOffset === length) {
+        inputCaretOffset = 0;
+      } else {
+        inputCaretOffset += 1;
+      } break;
+
+    case "ArrowRight":
+      // Move caret rightwards or to the back
+      if (inputCaretOffset === 0) {
+        inputCaretOffset = length;
+      } else { 
+        inputCaretOffset -= 1;
+      } break;
+
+    default:
+      if (inputKeys.includes(key)) {
+        console.log(key);
+        inputComputation.push(key)
+        target.value = inputComputation.join("")
+        inputCaretOffset = 0;
+      };
   };
 
-  // Update length after conditionals
-  length = target.value.length;
-  // Follow caret movement from left to right
+  length = target.value.length;  // Update length after conditionals
+  // Follow caret movement
   target.scrollLeft = (length * 14) - (inputCaretOffset * 17);
 
-  // Caret navigation for arrow keys
+  // Arrow keys' caret navigation
   length -= inputCaretOffset;
   target.setSelectionRange(length, length);
 });
@@ -94,7 +101,8 @@ keypad.addEventListener("mousedown", event => {
   const target = event.target;
   if (target.tagName !== "BUTTON") return;
 
-  const id = target.id
+  // Convert button.id into keyboard events for input-box
+  const id = target.id;
   if (id in buttonToKey) {
     input.dispatchEvent(new KeyboardEvent("keydown", {key: buttonToKey[id]}))
   };
