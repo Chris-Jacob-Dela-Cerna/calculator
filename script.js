@@ -8,15 +8,30 @@ const input = document.getElementById("input-box");
 
 //  ---  Configs  ---
 
+const buttonToKey = {
+  "0-button": "0", "1-button": "1", "2-button": "2",
+  "3-button": "3", "4-button": "4", "5-button": "5",
+  "6-button": "6", "7-button": "7", "8-button": "8", 
+  "9-button": "9", 
+  "decimal-button":   ".",
+  "multiply-button":  "*",
+  "divide-button":    "/",
+  "add-button":       "+",
+  "subtract-button":  "-",
+  "negative-button":  "_",
+  "clear-all-button": "Delete",
+  "clear-button":     "Backspace",
+  "equal-button":     "Enter",
+};
 const inputKeys = [
-  "0", "1", "2", "3", "4", 
-  "5", "6", "7", "8", "9", 
-  ".", "*", "/", "+", "-",
+  "0", "1", "2", "3", "4", "5", 
+  "6", "7", "8", "9", ".", "*", 
+  "/", "+", "-", "_",
 ];
 const validKeys = [
-  "0", "1", "2", "3", "4", 
-  "5", "6", "7", "8", "9", 
-  ".", "*", "/", "+", "-",
+  "0", "1", "2", "3", "4", "5", 
+  "6", "7", "8", "9", ".", "*", 
+  "/", "+", "-", "_",
   "Delete",    "Backspace", 
   "Enter",     "ArrowUp",
   "ArrowLeft", "ArrowRight",
@@ -76,12 +91,11 @@ input.addEventListener("keydown", event => {
 //  ---  Keypad  ---
 
 keypad.addEventListener("mousedown", event => {
-  const target = event.target
+  const target = event.target;
   if (target.tagName !== "BUTTON") return;
 
-  const idToKeys = {
-    3: "3",
-    4: "4",
-  }
-  if (target.id in idToKeys) return;
+  const id = target.id
+  if (id in buttonToKey) {
+    input.dispatchEvent(new KeyboardEvent("keydown", {key: buttonToKey[id]}))
+  };
 });
