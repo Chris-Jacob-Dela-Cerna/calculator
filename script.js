@@ -1,6 +1,7 @@
 
 //  ---  DOM References  ---
 
+const keypad = document.getElementById("calc-keypad");
 const input = document.getElementById("input");
 
 
@@ -61,15 +62,21 @@ input.addEventListener("keydown", event => {
   };
 
   // Update length after conditionals
-  length = target.value.length 
+  length = target.value.length;
   // Follow caret movement from left to right
-  target.scrollLeft = (length * 14) - (inputCaretOffset * 17) 
+  target.scrollLeft = (length * 14) - (inputCaretOffset * 17);
 
   // Caret navigation for arrow keys
-  length -= inputCaretOffset
-  target.setSelectionRange(length, length)
+  length -= inputCaretOffset;
+  target.setSelectionRange(length, length);
 });
 
 
 
 //  ---  Keypad  ---
+
+keypad.addEventListener("mousedown", event => {
+  const target = event.target
+  if (target.tagName !== "BUTTON") return;
+
+});
