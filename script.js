@@ -2,7 +2,7 @@
 //  ---  DOM References  ---
 
 const keypad = document.getElementById("calc-keypad");
-const input = document.getElementById("input");
+const input = document.getElementById("input-box");
 
 
 
@@ -79,4 +79,9 @@ keypad.addEventListener("mousedown", event => {
   const target = event.target
   if (target.tagName !== "BUTTON") return;
 
+  const idToKeys = {
+    3: "3",
+    4: "4",
+  }
+  if (target.id in idToKeys) return;
 });
