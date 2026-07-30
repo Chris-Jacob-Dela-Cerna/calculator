@@ -78,9 +78,8 @@ function includesChars(inputStr, chars=[]) {
 //  ---  Input Box  ---
 
 function validateInput(key) {
-
-  const length = inputComputation.length
-  const lastInput = inputComputation[length - 1]
+  const length = inputComputation.length;
+  const lastInput = inputComputation[length - 1];
 
   if (length < 1) {
     if (
@@ -92,12 +91,12 @@ function validateInput(key) {
     }
 
   } else if (length > 0) {
-    const lastInputChar = lastInput.slice(lastInput.length - 1)
+    const lastInputChar = lastInput.slice(lastInput.length - 1);
 
     if (numbers.includes(key)) {
       // Create new input if previous input has operators
       if (includesChars(lastInput, operatorDisplay) === true) {
-        inputComputation.push(key)
+        inputComputation.push(key);
       // Otherwise, concat to the last input
       } else {
         const newInput = lastInput + key;
@@ -112,7 +111,7 @@ function validateInput(key) {
           lastInputChar === "-" ||
           lastInputChar === "."
         ) return;
-        inputComputation.push(operatorToDisplay[key])
+        inputComputation.push(operatorToDisplay[key]);
       }
 
     } else if (notationSymbols.includes(key)) {
@@ -140,7 +139,7 @@ input.addEventListener("keydown", event => {
 
   const key = event.key;
   const target = event.target;
-  let length = target.value.length  // Read length before conditionals
+  let length = target.value.length;  // Read length before conditionals
 
   if (!validKeys.includes(key)) return;
 
@@ -160,15 +159,30 @@ input.addEventListener("keydown", event => {
       } else { 
         inputCaretOffset -= 1;
       } break;
-    
+
+    case "Backspace":
+      // Clear latest character
+      if (inputComputation.length < 1) return;
+
+      const length = inputComputation.length
+      const lastInput = inputComputation[length - 1]
+      if (lastInput.length < 2) inputComputation.pop();
+      else {
+        const lastInputChars = lastInput.split("");
+        lastInputChars.pop();
+        inputComputation.pop();
+        inputComputation.push(lastInputChars.join(""));
+      } break;
+
     case "Delete":
       // Clear all active input
-      inputComputation = []
-      inputCaretOffset = 0
+      inputComputation = [];
+      inputCaretOffset = 0;
+      break;
 
     default:
       if (inputKeys.includes(key)) {
-        validateInput(key)
+        validateInput(key);
         inputCaretOffset = 0;
       };
   };
