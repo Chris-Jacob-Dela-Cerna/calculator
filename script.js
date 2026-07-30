@@ -17,8 +17,8 @@ const buttonToKey = {
   "multiply-button":  "*",
   "divide-button":    "/",
   "add-button":       "+",
-  "subtract-button":  "_",
-  "negative-button":  "-",
+  "subtract-button":  "-",
+  "negative-button":  "_",
   "clear-all-button": "Delete",
   "clear-button":     "Backspace",
   "answer-button":    "ArrowUp",
@@ -28,7 +28,7 @@ const operatorToDisplay = {
   "*": "×",
   "/": "÷",
   "+": "+",
-  "_": "−",
+  "-": "−",
 }
 
 const numbers = [
@@ -36,10 +36,10 @@ const numbers = [
   "5", "6", "7", "8", "9",
 ]
 const notationSymbols = [
-  ".", "-",
+  ".", "_",
 ]
 const operatorSymbols = [
-  "*", "/", "+", "_",
+  "*", "/", "+", "-",
 ]
 const inputKeys = [].concat(numbers, notationSymbols, operatorSymbols)
 
@@ -86,7 +86,10 @@ function validateInput(key) {
     if (
       numbers.includes(key) || 
       notationSymbols.includes(key)
-    ) inputComputation.push(key);
+    ) {
+      if (key !== "_") inputComputation.push(key);
+      else inputComputation.push("-");
+    }
 
   } else if (length > 0) {
     const lastInputChar = lastInput.slice(lastInput.length - 1)
@@ -124,9 +127,9 @@ function validateInput(key) {
         const newInput = lastInput + key;
         inputComputation.splice(length - 1, 1, newInput);
 
-      } else if (key === "-") {
+      } else if (key === "_") {
         if (includesChars(lastInput, operatorDisplay) === false) return;
-        inputComputation.push(key);
+        inputComputation.push("-");
       }
     }
   }
