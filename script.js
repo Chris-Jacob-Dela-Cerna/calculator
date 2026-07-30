@@ -24,6 +24,12 @@ const buttonToKey = {
   "answer-button":    "ArrowUp",
   "equal-button":     "Enter",
 };
+const operatorToDisplay = {
+  "*": "×",
+  "/": "÷",
+  "+": "+",
+  "_": "−",
+}
 
 const numbers = [
   "0", "1", "2", "3", "4", 
@@ -73,15 +79,18 @@ function includesChars(inputStr, chars=[]) {
 
 function validateInput(key) {
 
-  // inputComputation: ["8", "-", "4", "+", "6"]
   const length = inputComputation.length
   const lastInput = inputComputation[length - 1]
-  
-  if (length < 1 && (numbers.includes(key) || notationSymbols.includes(key))) {
-    inputComputation.push(key);
-    console.log(key);
+
+  if (length < 1) {
+    if (
+      numbers.includes(key) || 
+      notationSymbols.includes(key)
+    ) inputComputation.push(key);
 
   } else if (length > 0) {
+    const lastInputChar = lastInput.slice(lastInput.length - 1)
+
     if (numbers.includes(key)) {
       // Create new input if previous input has operators
       if (includesChars(lastInput, operatorDisplay) === true) {
@@ -92,6 +101,14 @@ function validateInput(key) {
         inputComputation.splice(length - 1, 1, newInput);
       }
 
+    } else if (operatorSymbols.includes(key)) {
+      if (includesChars(lastInput, operatorDisplay) === false) {
+        if (
+          lastInputChar === "-" ||
+          lastInputChar === "."
+        ) return;
+        inputComputation.push(operatorToDisplay[key])
+      }
     }
   }
 }
@@ -142,6 +159,8 @@ input.addEventListener("keydown", event => {
   // Arrow keys' caret navigation
   length -= inputCaretOffset;
   target.setSelectionRange(length, length);
+
+  console.log(inputComputation)
 });
 
 
