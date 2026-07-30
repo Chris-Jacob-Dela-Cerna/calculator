@@ -102,12 +102,31 @@ function validateInput(key) {
       }
 
     } else if (operatorSymbols.includes(key)) {
+      // Block if last input is an operator
       if (includesChars(lastInput, operatorDisplay) === false) {
+        // Block if last character is - or .
         if (
           lastInputChar === "-" ||
           lastInputChar === "."
         ) return;
         inputComputation.push(operatorToDisplay[key])
+      }
+
+    } else if (notationSymbols.includes(key)) {
+      if (key === ".") {
+        // Block if last input is an operator
+        if (includesChars(lastInput, operatorDisplay) === true) return; 
+        // Block if last input already has decimals
+        if (includesChars(lastInput, ["."])) return; 
+        // Block if the last char is a negative sign
+        if (lastInputChar === "-") return; 
+
+        const newInput = lastInput + key;
+        inputComputation.splice(length - 1, 1, newInput);
+
+      } else if (key === "-") {
+        if (includesChars(lastInput, operatorDisplay) === false) return;
+        inputComputation.push(key);
       }
     }
   }
