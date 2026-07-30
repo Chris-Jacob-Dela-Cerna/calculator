@@ -78,8 +78,12 @@ input.addEventListener("keydown", event => {
     default:
       if (inputKeys.includes(key)) {
         console.log(key);
-        inputComputation.push(key)
-        target.value = inputComputation.join("")
+        if (key === "*") inputComputation.push("×");
+        else if (key === "/") inputComputation.push("÷");
+        else if (key === "_") inputComputation.push("−");
+        else inputComputation.push(key);
+
+        target.value = inputComputation.join("");
         inputCaretOffset = 0;
       };
   };
