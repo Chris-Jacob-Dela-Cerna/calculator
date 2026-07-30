@@ -17,18 +17,26 @@ const buttonToKey = {
   "multiply-button":  "*",
   "divide-button":    "/",
   "add-button":       "+",
-  "subtract-button":  "-",
-  "negative-button":  "_",
+  "subtract-button":  "_",
+  "negative-button":  "-",
   "clear-all-button": "Delete",
   "clear-button":     "Backspace",
   "answer-button":    "ArrowUp",
   "equal-button":     "Enter",
 };
-const inputKeys = [
-  "0", "1", "2", "3", "4", "5", 
-  "6", "7", "8", "9", ".", "*", 
-  "/", "+", "-", "_",
-];
+
+const numbers = [
+  "0", "1", "2", "3", "4", 
+  "5", "6", "7", "8", "9",
+]
+const notationSymbols = [
+  ".", "-",
+]
+const operatorSymbols = [
+  "*", "/", "+", "_",
+]
+const inputKeys = [].concat(numbers, notationSymbols, operatorSymbols)
+
 const validKeys = [
   "0", "1", "2", "3", "4", "5", 
   "6", "7", "8", "9", ".", "*", 
@@ -48,6 +56,24 @@ let inputComputation = [];
 
 
 //  ---  Input Box  ---
+
+function checkInput(key) {
+
+  // inputComputation: ["8", "-", "4", "+", "6"]
+  const length = inputComputation.length
+  const lastInput = inputComputation[length - 1]
+
+  if (length < 1) {
+    if (numbers.includes(key) || notationSymbols.includes(key)) {
+      inputComputation.push(key)
+    }
+  }
+
+  // if (key === "*") inputComputation.push("×");
+  // else if (key === "/") inputComputation.push("÷");
+  // else if (key === "_") inputComputation.push("−");
+  // else inputComputation.push(key);
+}
 
 input.addEventListener("keydown", event => {
   event.preventDefault();
@@ -74,22 +100,24 @@ input.addEventListener("keydown", event => {
       } else { 
         inputCaretOffset -= 1;
       } break;
+    
+    case "Delete":
+      // Clear all active input
+      inputComputation = []
+      inputCaretOffset = 0
 
     default:
       if (inputKeys.includes(key)) {
         console.log(key);
-        if (key === "*") inputComputation.push("×");
-        else if (key === "/") inputComputation.push("÷");
-        else if (key === "_") inputComputation.push("−");
-        else inputComputation.push(key);
 
-        target.value = inputComputation.join("");
+        checkInput(key)
         inputCaretOffset = 0;
       };
   };
+  target.value = inputComputation.join(" ");
 
-  length = target.value.length;  // Update length after conditionals
   // Follow caret movement
+  length = target.value.length;  // Update length after conditionals
   target.scrollLeft = (length * 14) - (inputCaretOffset * 17);
 
   // Arrow keys' caret navigation
@@ -108,6 +136,8 @@ keypad.addEventListener("mousedown", event => {
   // Convert button.id into keyboard events for input-box
   const id = target.id;
   if (id in buttonToKey) {
-    input.dispatchEvent(new KeyboardEvent("keydown", {key: buttonToKey[id]}))
+    input.dispatchEvent(new KeyboardEvent("keydown", {
+      key: buttonToKey[id]
+    }));
   };
 });
