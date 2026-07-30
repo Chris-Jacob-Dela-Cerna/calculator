@@ -37,6 +37,10 @@ const operatorSymbols = [
 ]
 const inputKeys = [].concat(numbers, notationSymbols, operatorSymbols)
 
+const operatorDisplay = [
+  "×", "÷", "+", "−",
+]
+
 const validKeys = [
   "0", "1", "2", "3", "4", "5", 
   "6", "7", "8", "9", ".", "*", 
@@ -51,28 +55,45 @@ let inputComputation = [];
 
 
 
+//  ---  Utils  ---
+
+function includesChars(inputStr, chars=[]) {
+  let inputChars = inputStr.split("")
+  inputChars = inputChars.filter(character => chars.includes(character))
+  return inputChars.length > 0
+}
+
+
+
 //  ---  History Panel  ---
 
 
 
 //  ---  Input Box  ---
 
-function checkInput(key) {
+function validateInput(key) {
 
   // inputComputation: ["8", "-", "4", "+", "6"]
   const length = inputComputation.length
   const lastInput = inputComputation[length - 1]
+  
+  if (length < 1 && (numbers.includes(key) || notationSymbols.includes(key))) {
+    inputComputation.push(key);
+    console.log(key);
 
-  if (length < 1) {
-    if (numbers.includes(key) || notationSymbols.includes(key)) {
-      inputComputation.push(key)
+  } else if (length > 0) {
+    if (numbers.includes(key)) {
+      // Create new input if previous input has operators
+      if (includesChars(lastInput, operatorDisplay) === true) {
+        inputComputation.push(key)
+      // Otherwise, concat to the last input
+      } else {
+        const newInput = lastInput + key;
+        inputComputation.splice(length - 1, 1, newInput);
+      }
+
     }
   }
-
-  // if (key === "*") inputComputation.push("×");
-  // else if (key === "/") inputComputation.push("÷");
-  // else if (key === "_") inputComputation.push("−");
-  // else inputComputation.push(key);
 }
 
 input.addEventListener("keydown", event => {
@@ -108,9 +129,7 @@ input.addEventListener("keydown", event => {
 
     default:
       if (inputKeys.includes(key)) {
-        console.log(key);
-
-        checkInput(key)
+        validateInput(key)
         inputCaretOffset = 0;
       };
   };

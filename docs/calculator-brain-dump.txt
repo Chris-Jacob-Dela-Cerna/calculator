@@ -11,11 +11,11 @@ Computation:
     //  ["99", "-", "3"]  => Concactenate 3, into "33"
     If user enters a number and the previous item is a number, stack both numbers.
    
-    //  ["34", "+", "−..."]
-    If user enters a Unicode Minus (−) the next input must be a number then append.
+    //  ["34", "+", "-..."]
+    If user enters a Hyphen Minus (-) the next input must be a number then append.
     
-    //  ["12", "-", "..."]
-    Else if Hyphen Minus (-), the next input must be a number but create a new item.
+    //  ["12", "−", "..."]
+    Else if Unicode Minus (−), the next input must be a number but create a new item.
     
     //  ["8", "+", "." or "0."] will work.
     //  ["8", "+", "8. ..."] append "8" = "8.8"
