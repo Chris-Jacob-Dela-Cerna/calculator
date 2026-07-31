@@ -63,10 +63,9 @@ let expression = [];
 
 //  ---  Utils  ---
 
-function includesChars(term, chars=[]) {
+function contains(term, chars=[]) {
   let termChars = term.split("");
-  return termChars.filter(char => chars.includes(char))
-                  .length > 0 ? true : false;
+  return termChars.some(char => chars.includes(char))
 };
 
 
@@ -76,6 +75,30 @@ function includesChars(term, chars=[]) {
 
 
 //  ---  Input Box  ---
+
+function multiply(x, y) {
+  return Number(x) * Number(y);
+};
+
+function divide(x, y) {
+  return Number(x) / Number(y);
+};
+
+function calculate(exp) {
+
+  const MD = ["×", "÷"];
+  while (contains(exp.join(""), MD)) {
+    const operatorIdx = exp.findIndex(term => MD.includes(term));
+    const firstTerm = operatorIdx - 1;
+    const secondTerm = operatorIdx + 1;
+
+    let answer = null;
+    if (exp[operatorIdx] === "×") answer = multiply(exp[firstTerm], exp[secondTerm]);
+    else answer = divide(exp[firstTerm], exp[secondTerm]);
+    exp.splice(firstTerm, 3, String(answer))
+  };
+
+};
 
 function validateInput(key, expLength, lastTerm) {
 
@@ -91,7 +114,7 @@ function validateInput(key, expLength, lastTerm) {
     const lastTermChar = lastTerm.slice(lastTerm.length - 1);
 
     if (numbers.includes(key)) {
-      if (includesChars(lastTerm, operatorDisplay)) {
+      if (contains(lastTerm, operatorDisplay)) {
         expression.push(key);
       } else {
         expression.splice(expLength - 1, 1, lastTerm + key);
@@ -100,7 +123,7 @@ function validateInput(key, expLength, lastTerm) {
 
     } else if (operatorSymbols.includes(key)) {
       if (
-        includesChars(lastTerm, operatorDisplay) ||  // Block if last input is an operator
+        contains(lastTerm, operatorDisplay) ||  // Block if last input is an operator
         lastTermChar === "-"                     ||  // Block if last character is - or .
         lastTermChar === "."
       ) return;
@@ -112,8 +135,8 @@ function validateInput(key, expLength, lastTerm) {
       switch (key) {
         case ".":
           if (
-            includesChars(lastTerm, operatorDisplay) ||  // Block if last input is an operator
-            includesChars(lastTerm, ["."])           ||  // Block if last input already has decimals
+            contains(lastTerm, operatorDisplay) ||  // Block if last input is an operator
+            contains(lastTerm, ["."])           ||  // Block if last input already has decimals
             lastTermChar === "-"                         // Block if last character is a negative sign
           ) return;
 
@@ -122,7 +145,7 @@ function validateInput(key, expLength, lastTerm) {
           break;
 
         case "_":
-          if (!includesChars(lastTerm, operatorDisplay)) return;  // Block if last input is not an operator
+          if (!contains(lastTerm, operatorDisplay)) return;  // Block if last input is not an operator
           expression.push("-");
           break;
       }
@@ -171,6 +194,19 @@ input.addEventListener("keydown", event => {
       caretOffset       = 0;
       break;
 
+    // Compute expression
+    case "Enter":
+      if (expLength === 0) return;
+      const lastTermChar = lastTerm.slice(lastTerm.length - 1)
+      if (
+        contains(lastTerm, operatorDisplay) || // Block if last term has an operator
+        lastTermChar === "-"                     || // Block if last character is - or .
+        lastTermChar === "."
+      ) return;
+      calculate(expression);
+      caretOffset = 0;
+      break;
+
     // Input keys
     default:
       if (!expKeys.includes(key)) return;
@@ -178,6 +214,7 @@ input.addEventListener("keydown", event => {
       caretOffset = 0;
   };
 
+  // Constuct input display
   target.value = expression.join(" ");
 
   // Follow caret movement
