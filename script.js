@@ -9,9 +9,9 @@ const input = document.getElementById("input-box");
 //  ---  Configs  ---
 
 const buttonToKey = {
-  "0-button": "0", "1-button": "1", "2-button": "2",
-  "3-button": "3", "4-button": "4", "5-button": "5",
-  "6-button": "6", "7-button": "7", "8-button": "8", 
+  "0-button": "0",    "1-button": "1",    "2-button": "2",
+  "3-button": "3",    "4-button": "4",    "5-button": "5",
+  "6-button": "6",    "7-button": "7",    "8-button": "8", 
   "9-button": "9", 
   "decimal-button":   ".",
   "multiply-button":  "*",
@@ -34,18 +34,18 @@ const operatorToDisplay = {
 const numbers = [
   "0", "1", "2", "3", "4", 
   "5", "6", "7", "8", "9",
-]
+];
 const notationSymbols = [
   ".", "_",
-]
+];
 const operatorSymbols = [
   "*", "/", "+", "-",
-]
-const inputKeys = [].concat(numbers, notationSymbols, operatorSymbols)
+];
+const expKeys = [].concat(numbers, notationSymbols, operatorSymbols)
 
 const operatorDisplay = [
   "×", "÷", "+", "−",
-]
+];
 
 const validKeys = [
   "0", "1", "2", "3", "4", "5", 
@@ -56,18 +56,18 @@ const validKeys = [
   "ArrowLeft", "ArrowRight",
 ];
 
-let inputCaretOffset = 0;
-let inputComputation = [];
+let caratOffset = 0;
+let expression = [];
 
 
 
 //  ---  Utils  ---
 
-function includesChars(inputStr, chars=[]) {
-  let inputChars = inputStr.split("")
-  inputChars = inputChars.filter(character => chars.includes(character))
-  return inputChars.length > 0
-}
+function includesChars(term, chars=[]) {
+  let termChars = term.split("");
+  return termChars.filter(char => chars.includes(char))
+                  .length > 0 ? true : false;
+};
 
 
 
@@ -77,58 +77,47 @@ function includesChars(inputStr, chars=[]) {
 
 //  ---  Input Box  ---
 
-function validateInput(key) {
-  const length = inputComputation.length;
-  const lastInput = inputComputation[length - 1];
+function validateInput(key, expLength, lastTerm) {
 
-  if (length < 1) {
+  if (expLength === 0) {
     if (
       numbers.includes(key) || 
       notationSymbols.includes(key)
     ) {
-      if (key !== "_") inputComputation.push(key);
-      else inputComputation.push("-");
+      if (key !== "_") expression.push(key);
+      else expression.push("-");
     }
 
-  } else if (length > 0) {
-    const lastInputChar = lastInput.slice(lastInput.length - 1);
+
+  } else if (expLength > 0) {
+    const lastTermChar = lastTerm.slice(lastTerm.length - 1);
 
     if (numbers.includes(key)) {
       // Create new input if previous input has operators
-      if (includesChars(lastInput, operatorDisplay) === true) {
-        inputComputation.push(key);
-      // Otherwise, concat to the last input
+      if (includesChars(lastTerm, operatorDisplay) === true) {
+        expression.push(key);
       } else {
-        const newInput = lastInput + key;
-        inputComputation.splice(length - 1, 1, newInput);
+        const newInput = lastTerm + key;
+        expression.splice(expLength - 1, 1, newInput);
       }
 
     } else if (operatorSymbols.includes(key)) {
-      // Block if last input is an operator
-      if (includesChars(lastInput, operatorDisplay) === false) {
-        // Block if last character is - or .
-        if (
-          lastInputChar === "-" ||
-          lastInputChar === "."
-        ) return;
-        inputComputation.push(operatorToDisplay[key]);
-      }
+      if (includesChars(lastTerm, operatorDisplay) === true) return;  // Block if last input is an operator
+      if (lastTermChar === "-" || lastTermChar === ".")     return;  // Block if last character is - or .
+      expression.push(operatorToDisplay[key]);
 
     } else if (notationSymbols.includes(key)) {
       if (key === ".") {
-        // Block if last input is an operator
-        if (includesChars(lastInput, operatorDisplay) === true) return; 
-        // Block if last input already has decimals
-        if (includesChars(lastInput, ["."])) return; 
-        // Block if the last char is a negative sign
-        if (lastInputChar === "-") return; 
+        if (includesChars(lastTerm, operatorDisplay) === true) return;  // Block if last input is an operator
+        if (includesChars(lastTerm, ["."])) return;  // Block if last input already has decimals
+        if (lastTermChar === "-") return;   // Block if last character is a negative sign
 
-        const newInput = lastInput + key;
-        inputComputation.splice(length - 1, 1, newInput);
+        const newInput = lastTerm + key;
+        expression.splice(expLength - 1, 1, newInput);
 
       } else if (key === "_") {
-        if (includesChars(lastInput, operatorDisplay) === false) return;
-        inputComputation.push("-");
+        if (includesChars(lastTerm, operatorDisplay) === false) return;
+        expression.push("-");
       }
     }
   }
@@ -138,65 +127,59 @@ input.addEventListener("keydown", event => {
   event.preventDefault();
 
   const key = event.key;
-  const target = event.target;
-  let length = target.value.length;  // Read length before conditionals
-
   if (!validKeys.includes(key)) return;
 
+  const target        = event.target;
+  const expLength     = expression.length
+  const lastTerm      = expression[expLength - 1]
+  let   displayLength = target.value.length;
+
   switch (key) {
+    // Move caret leftwards or to the front
     case "ArrowLeft":
-      // Move caret leftwards or to the front
-      if (inputCaretOffset === length) {
-        inputCaretOffset = 0;
-      } else {
-        inputCaretOffset += 1;
-      } break;
+      if (caratOffset === displayLength) caratOffset = 0;
+      else caratOffset += 1;
+      break;
 
+    // Move caret rightwards or to the back
     case "ArrowRight":
-      // Move caret rightwards or to the back
-      if (inputCaretOffset === 0) {
-        inputCaretOffset = length;
-      } else { 
-        inputCaretOffset -= 1;
-      } break;
+      if (caratOffset === 0) caratOffset = displayLength;
+      else caratOffset -= 1;
+      break;
 
+    // Delete latest input
     case "Backspace":
-      // Clear latest character
-      if (inputComputation.length < 1) return;
-
-      const length = inputComputation.length
-      const lastInput = inputComputation[length - 1]
-      if (lastInput.length < 2) inputComputation.pop();
+      if (expression.length === 0) return;
+      if (lastTerm.length < 2) expression.pop();
       else {
-        const lastInputChars = lastInput.split("");
-        lastInputChars.pop();
-        inputComputation.pop();
-        inputComputation.push(lastInputChars.join(""));
-      } break;
+        const lastTermChars   = lastTerm.split("");
+        lastTermChars.length -= 1;
+        expression.length    -= 1;
+        expression.push(lastTermChars.join(""));
+      }
+      break;
 
+    // Delete entire expression
     case "Delete":
-      // Clear all active input
-      inputComputation = [];
-      inputCaretOffset = 0;
+      expression.length = 0;
+      caratOffset       = 0;
       break;
 
     default:
-      if (inputKeys.includes(key)) {
-        validateInput(key);
-        inputCaretOffset = 0;
-      };
+      if (!expKeys.includes(key)) return;
+      validateInput(key, expLength, lastTerm);
+      caratOffset = 0;
   };
-  target.value = inputComputation.join(" ");
+
+  target.value = expression.join(" ");
 
   // Follow caret movement
-  length = target.value.length;  // Update length after conditionals
-  target.scrollLeft = (length * 14) - (inputCaretOffset * 17);
+  displayLength = target.value.length;
+  target.scrollLeft = (displayLength * 14) - (caratOffset * 17);
 
   // Arrow keys' caret navigation
-  length -= inputCaretOffset;
-  target.setSelectionRange(length, length);
-
-  console.log(inputComputation)
+  displayLength -= caratOffset;
+  target.setSelectionRange(displayLength, displayLength);
 });
 
 
@@ -207,11 +190,10 @@ keypad.addEventListener("mousedown", event => {
   const target = event.target;
   if (target.tagName !== "BUTTON") return;
 
-  // Convert button.id into keyboard events for input-box
+  // Convert button clicks into keyboard events for input
   const id = target.id;
   if (id in buttonToKey) {
-    input.dispatchEvent(new KeyboardEvent("keydown", {
-      key: buttonToKey[id]
-    }));
+    const key = new KeyboardEvent("keydown", {key: buttonToKey[id]})
+    input.dispatchEvent(key);
   };
 });
