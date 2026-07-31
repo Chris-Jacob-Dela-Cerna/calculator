@@ -56,7 +56,7 @@ const validKeys = [
   "ArrowLeft", "ArrowRight",
 ];
 
-let caratOffset = 0;
+let caretOffset = 0;
 let expression = [];
 
 
@@ -80,44 +80,51 @@ function includesChars(term, chars=[]) {
 function validateInput(key, expLength, lastTerm) {
 
   if (expLength === 0) {
-    if (
-      numbers.includes(key) || 
-      notationSymbols.includes(key)
-    ) {
-      if (key !== "_") expression.push(key);
-      else expression.push("-");
+    if (!(numbers.includes(key) || notationSymbols.includes(key))) return;
+    if (key === "_") {
+      expression.push("-");
+    } else {
+      expression.push(key);
     }
-
 
   } else if (expLength > 0) {
     const lastTermChar = lastTerm.slice(lastTerm.length - 1);
 
     if (numbers.includes(key)) {
-      // Create new input if previous input has operators
-      if (includesChars(lastTerm, operatorDisplay) === true) {
+      if (includesChars(lastTerm, operatorDisplay)) {
         expression.push(key);
       } else {
-        const newInput = lastTerm + key;
-        expression.splice(expLength - 1, 1, newInput);
+        expression.splice(expLength - 1, 1, lastTerm + key);
       }
 
+
     } else if (operatorSymbols.includes(key)) {
-      if (includesChars(lastTerm, operatorDisplay) === true) return;  // Block if last input is an operator
-      if (lastTermChar === "-" || lastTermChar === ".")     return;  // Block if last character is - or .
+      if (
+        includesChars(lastTerm, operatorDisplay) ||  // Block if last input is an operator
+        lastTermChar === "-"                     ||  // Block if last character is - or .
+        lastTermChar === "."
+      ) return;
+
       expression.push(operatorToDisplay[key]);
 
+
     } else if (notationSymbols.includes(key)) {
-      if (key === ".") {
-        if (includesChars(lastTerm, operatorDisplay) === true) return;  // Block if last input is an operator
-        if (includesChars(lastTerm, ["."])) return;  // Block if last input already has decimals
-        if (lastTermChar === "-") return;   // Block if last character is a negative sign
+      switch (key) {
+        case ".":
+          if (
+            includesChars(lastTerm, operatorDisplay) ||  // Block if last input is an operator
+            includesChars(lastTerm, ["."])           ||  // Block if last input already has decimals
+            lastTermChar === "-"                         // Block if last character is a negative sign
+          ) return;
 
-        const newInput = lastTerm + key;
-        expression.splice(expLength - 1, 1, newInput);
+          const newInput = lastTerm + key;
+          expression.splice(expLength - 1, 1, newInput);
+          break;
 
-      } else if (key === "_") {
-        if (includesChars(lastTerm, operatorDisplay) === false) return;
-        expression.push("-");
+        case "_":
+          if (!includesChars(lastTerm, operatorDisplay)) return;  // Block if last input is not an operator
+          expression.push("-");
+          break;
       }
     }
   }
@@ -137,14 +144,14 @@ input.addEventListener("keydown", event => {
   switch (key) {
     // Move caret leftwards or to the front
     case "ArrowLeft":
-      if (caratOffset === displayLength) caratOffset = 0;
-      else caratOffset += 1;
+      if (caretOffset === displayLength) caretOffset = 0;
+      else caretOffset += 1;
       break;
 
     // Move caret rightwards or to the back
     case "ArrowRight":
-      if (caratOffset === 0) caratOffset = displayLength;
-      else caratOffset -= 1;
+      if (caretOffset === 0) caretOffset = displayLength;
+      else caretOffset -= 1;
       break;
 
     // Delete latest input
@@ -162,23 +169,24 @@ input.addEventListener("keydown", event => {
     // Delete entire expression
     case "Delete":
       expression.length = 0;
-      caratOffset       = 0;
+      caretOffset       = 0;
       break;
 
+    // Input keys
     default:
       if (!expKeys.includes(key)) return;
       validateInput(key, expLength, lastTerm);
-      caratOffset = 0;
+      caretOffset = 0;
   };
 
   target.value = expression.join(" ");
 
   // Follow caret movement
   displayLength = target.value.length;
-  target.scrollLeft = (displayLength * 14) - (caratOffset * 17);
+  target.scrollLeft = (displayLength * 14) - (caretOffset * 17);
 
   // Arrow keys' caret navigation
-  displayLength -= caratOffset;
+  displayLength -= caretOffset;
   target.setSelectionRange(displayLength, displayLength);
 });
 
@@ -190,10 +198,8 @@ keypad.addEventListener("mousedown", event => {
   const target = event.target;
   if (target.tagName !== "BUTTON") return;
 
-  // Convert button clicks into keyboard events for input
+  // Convert buttons into keyboard events
   const id = target.id;
-  if (id in buttonToKey) {
-    const key = new KeyboardEvent("keydown", {key: buttonToKey[id]})
-    input.dispatchEvent(key);
-  };
+  const key = new KeyboardEvent("keydown", {key: buttonToKey[id]})
+  input.dispatchEvent(key);
 });
