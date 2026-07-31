@@ -29,7 +29,13 @@ const operatorToDisplay = {
   "/": "÷",
   "+": "+",
   "-": "−",
-}
+};
+const operations = {
+  "×": multiply,
+  "÷": divide,
+  "+": add,
+  "−": subtract,
+};
 
 const numbers = [
   "0", "1", "2", "3", "4", 
@@ -46,13 +52,6 @@ const expKeys = [].concat(numbers, notationSymbols, operatorSymbols)
 const operatorDisplay = [
   "×", "÷", "+", "−",
 ];
-const operations = {
-  "×": multiply,
-  "÷": divide,
-  "+": add,
-  "−": subtract,
-}
-
 const validKeys = [
   "0", "1", "2", "3", "4", "5", 
   "6", "7", "8", "9", ".", "*", 
@@ -64,14 +63,14 @@ const validKeys = [
 
 let caretOffset = 0;
 let expression = [];
-
+let history = {}
 
 
 //  ---  Utils  ---
 
 function contains(term, chars) {
   let termChars = term.split("");
-  return termChars.some(char => chars.includes(char))
+  return termChars.some(char => chars.includes(char));
 };
 
 
@@ -81,6 +80,32 @@ function contains(term, chars) {
 
 
 //  ---  Calculation  ---
+
+function calculate(exp) {
+  const previousExp = exp.slice()
+
+  const MD = ["×", "÷"];
+  evaluate(exp, MD);
+  const AS = ["+", "−"];
+  evaluate(exp, AS);
+
+  if (previousExp.join("") === exp.join("")) return;
+  history.append({
+    "expression": previousExp,
+    "answer": exp,
+  });
+};
+
+function evaluate(exp, operators) {
+  while (contains(exp.join(""), operators)) {
+    const operatorIdx = exp.findIndex(term => operators.includes(term));
+    const firstTermIdx = operatorIdx - 1;
+    const secondTermIdx = operatorIdx + 1;
+
+    const answer = operations[exp[operatorIdx]](exp[firstTermIdx], exp[secondTermIdx]);
+    exp.splice(firstTermIdx, 3, String(answer));
+  };
+};
 
 function multiply(x, y) {
   return Number(x) * Number(y);
@@ -96,25 +121,6 @@ function add(x, y) {
 
 function subtract(x, y) {
   return Number(x) - Number(y);
-};
-
-function evaluate(exp, operators) {
-  while (contains(exp.join(""), operators)) {
-    const operatorIdx = exp.findIndex(term => operators.includes(term));
-    const firstTermIdx = operatorIdx - 1;
-    const secondTermIdx = operatorIdx + 1;
-
-    const answer = operations[exp[operatorIdx]](exp[firstTermIdx], exp[secondTermIdx]);
-    exp.splice(firstTermIdx, 3, String(answer));
-  };
-};
-
-function calculate(exp) {
-  const MD = ["×", "÷"];
-  evaluate(exp, MD);
-
-  const AS = ["+", "−"];
-  evaluate(exp, AS);
 };
 
 
