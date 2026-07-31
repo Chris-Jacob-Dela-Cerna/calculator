@@ -80,7 +80,7 @@ function includesChars(term, chars=[]) {
 function validateInput(key, expLength, lastTerm) {
 
   if (expLength === 0) {
-    if (!(numbers.includes(key) || notationSymbols.includes(key))) return;
+    if (!(numbers.includes(key) || notationSymbols.includes(key))) return;  // Block if input is neither a number or notation
     if (key === "_") {
       expression.push("-");
     } else {
@@ -161,8 +161,7 @@ input.addEventListener("keydown", event => {
       else {
         const lastTermChars   = lastTerm.split("");
         lastTermChars.length -= 1;
-        expression.length    -= 1;
-        expression.push(lastTermChars.join(""));
+        expression.splice(expLength - 1, 1, lastTermChars.join(""))
       }
       break;
 
