@@ -74,7 +74,7 @@ function contains(term, chars=[]) {
 
 
 
-//  ---  Input Box  ---
+//  ---  Calculation  ---
 
 function multiply(x, y) {
   return Number(x) * Number(y);
@@ -84,7 +84,16 @@ function divide(x, y) {
   return Number(x) / Number(y);
 };
 
+function add(x, y) {
+  return Number(x) + Number(y);
+};
+
+function subtract(x, y) {
+  return Number(x) - Number(y);
+};
+
 function calculate(exp) {
+  console.log(exp)
 
   const MD = ["×", "÷"];
   while (contains(exp.join(""), MD)) {
@@ -98,7 +107,22 @@ function calculate(exp) {
     exp.splice(firstTerm, 3, String(answer))
   };
 
+  const AS = ["+", "−"];
+  while (contains(exp.join(""), AS)) {
+    const operatorIdx = exp.findIndex(term => AS.includes(term));
+    const firstTerm = operatorIdx - 1;
+    const secondTerm = operatorIdx + 1;
+
+    let answer = null;
+    if (exp[operatorIdx] === "+") answer = add(exp[firstTerm], exp[secondTerm]);
+    else answer = subtract(exp[firstTerm], exp[secondTerm]);
+    exp.splice(firstTerm, 3, String(answer))
+  };
 };
+
+
+
+//  ---  Input Box  ---
 
 function validateInput(key, expLength, lastTerm) {
 
