@@ -46,6 +46,12 @@ const expKeys = [].concat(numbers, notationSymbols, operatorSymbols)
 const operatorDisplay = [
   "×", "÷", "+", "−",
 ];
+const operations = {
+  "×": multiply,
+  "÷": divide,
+  "+": add,
+  "−": subtract,
+}
 
 const validKeys = [
   "0", "1", "2", "3", "4", "5", 
@@ -63,7 +69,7 @@ let expression = [];
 
 //  ---  Utils  ---
 
-function contains(term, chars=[]) {
+function contains(term, chars) {
   let termChars = term.split("");
   return termChars.some(char => chars.includes(char))
 };
@@ -92,32 +98,23 @@ function subtract(x, y) {
   return Number(x) - Number(y);
 };
 
-function calculate(exp) {
-  console.log(exp)
+function evaluate(exp, operators) {
+  while (contains(exp.join(""), operators)) {
+    const operatorIdx = exp.findIndex(term => operators.includes(term));
+    const firstTermIdx = operatorIdx - 1;
+    const secondTermIdx = operatorIdx + 1;
 
-  const MD = ["×", "÷"];
-  while (contains(exp.join(""), MD)) {
-    const operatorIdx = exp.findIndex(term => MD.includes(term));
-    const firstTerm = operatorIdx - 1;
-    const secondTerm = operatorIdx + 1;
-
-    let answer = null;
-    if (exp[operatorIdx] === "×") answer = multiply(exp[firstTerm], exp[secondTerm]);
-    else answer = divide(exp[firstTerm], exp[secondTerm]);
-    exp.splice(firstTerm, 3, String(answer))
+    const answer = operations[exp[operatorIdx]](exp[firstTermIdx], exp[secondTermIdx]);
+    exp.splice(firstTermIdx, 3, String(answer));
   };
+};
+
+function calculate(exp) {
+  const MD = ["×", "÷"];
+  evaluate(exp, MD);
 
   const AS = ["+", "−"];
-  while (contains(exp.join(""), AS)) {
-    const operatorIdx = exp.findIndex(term => AS.includes(term));
-    const firstTerm = operatorIdx - 1;
-    const secondTerm = operatorIdx + 1;
-
-    let answer = null;
-    if (exp[operatorIdx] === "+") answer = add(exp[firstTerm], exp[secondTerm]);
-    else answer = subtract(exp[firstTerm], exp[secondTerm]);
-    exp.splice(firstTerm, 3, String(answer))
-  };
+  evaluate(exp, AS);
 };
 
 
