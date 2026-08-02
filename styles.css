@@ -25,119 +25,167 @@ body {
     flex: 5 0 360px;
     flex-direction: column;
     justify-content: center;
+
+    .calculator {
+      display: flex;
+      flex-direction: column;
+
+      aspect-ratio: 9 / 10;
+      max-height: 90%;
+      width: 75%;
+    }
   }
 }
 
 
 
-.calculator {
+.display {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
 
-  aspect-ratio: 9 / 10;
-  max-height: 90%;
-  width: 75%;
-
-  .display {
-    display: flex;
+  .history-panel {
     flex: 1 1 0;
-    flex-direction: column;
 
-    .history-panel {
-      background-color: #484848;
-      border-bottom: 1px solid #222222;
-      border-radius: 10px 10px 0 0;
-      box-shadow: 1px 1px 2px #1a1a1a;
-      flex: 1 1 0;
-    }
+    background-color: #484848;
+    border-bottom: 1px solid #222222;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 1px 1px 2px #1a1a1a;
+    overflow-y: auto;
 
-    .input-panel {
+    .history {
       display: flex;
-      flex: 0 0 5em;
-      justify-content: right;
+      flex-direction: column;
 
-      background-color: #3c3c3c;
-      border-radius: 0 0 10px 10px;
-      box-shadow: 1px 1px 2px #1a1a1a;
-      padding: 8px 8px 24px 8px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
 
-      .input {
-        flex: 1 1 0;
+      .item {
+        display: flex;
 
-        background-color: #3c3c3c;
-        border: none;
-        caret-color: #b9b9b9;
-        color: #f6f6f6;
-        font-size: 24px;
-        min-width: 0;
-        text-align: right;
+        border-top: 1px solid #1a1a1a;
 
-        &:focus {
-          border: 0;
-          outline: 0;
+        .box {
+          color: #f6f6f6;
+          font-size: 20px;
+          font-weight: 200;
+          margin: 0;
+          overflow: hidden;
+          white-space: nowrap;
         }
+        .expression.box {
+          flex: 0 1 65%;
+
+          padding: 8px 16px;
+          text-overflow: ellipsis;
+        }
+        .divider.box {
+          padding: 8px 4px;
+        }
+        .answer.box {
+          flex: 0 1 35%;
+
+          padding: 8px 16px;
+          text-align: end;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .first.item {
+        border: 0;
       }
     }
   }
 
-  .keypad {
+  .input-panel {
     display: flex;
-    flex: 0 0 auto;
+    flex: 0 0 5em;
+    justify-content: right;
+
+    background-color: #3c3c3c;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 1px 1px 2px #1a1a1a;
+    padding: 8px 8px 24px 8px;
+
+    .input {
+      flex: 1 1 0;
+
+      background-color: #3c3c3c;
+      border: 0;
+      caret-color: #b9b9b9;
+      color: #f6f6f6;
+      font-size: 24px;
+      min-width: 0;
+      text-align: right;
+
+      &:focus {
+        border: 0;
+        outline: 0;
+      }
+    }
+  }
+}
+
+
+
+.keypad {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+
+  padding-top: 10px;
+
+  .column {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
     gap: 4px;
 
-    padding-top: 10px;
+    .button {
+      flex: 0 0 3em;
 
-    .column {
-      display: flex;
-      flex: 1 1 0;
-      flex-direction: column;
-      gap: 4px;
+      background-color: #3f3f3f;
+      border: 0;
+      border-radius: 8px;
+      box-shadow: 1px 1px 2px #1a1a1a;
+      color: #fdfdfd;
+      font-size: 16px;
+      font-weight: 400;
 
-      .button {
-        flex: 0 0 3em;
-
-        background-color: #3f3f3f;
-        border: 0;
-        border-radius: 8px;
-        box-shadow: 1px 1px 2px #1a1a1a;
-        color: #fdfdfd;
-        font-size: 16px;
-        font-weight: 400;
-
-        &:hover {
-          background-color: #484848;
-        }
-        &:active {
-          background-color: #595959;
-        }
+      &:hover {
+        background-color: #484848;
       }
-
-      .number.button {
-        background-color: #4e4e4e;
-        font-weight: 600;
-
-        &:hover {
-          background-color: #5b5b5b;
-        }
-        &:active {
-          background-color: #656565;
-        }
+      &:active {
+        background-color: #595959;
       }
+    }
 
-      .equal.button {
-        background-color: #d1ba39;
+    .number.button {
+      background-color: #4e4e4e;
+      font-weight: 600;
 
-        &:hover {
-          background-color: #e1cc56;
-        }
-        &:active {
-          background-color: #eddc7c;
-        }
+      &:hover {
+        background-color: #5b5b5b;
       }
-
-      .utility.button {
-        font-weight: 500;
+      &:active {
+        background-color: #656565;
       }
+    }
+
+    .equal.button {
+      background-color: #d1ba39;
+
+      &:hover {
+        background-color: #e1cc56;
+      }
+      &:active {
+        background-color: #eddc7c;
+      }
+    }
+
+    .utility.button {
+      font-weight: 500;
     }
   }
 }
