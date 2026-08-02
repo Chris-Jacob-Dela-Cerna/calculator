@@ -76,19 +76,25 @@ body {
         }
         .expression.box {
           flex: 0 1 65%;
-
-          padding: 8px 16px;
-          text-overflow: ellipsis;
         }
         .divider.box {
-          padding: 8px 4px;
+          padding: 8px 0;
         }
         .answer.box {
           flex: 0 1 35%;
 
-          padding: 8px 16px;
           text-align: end;
+        }
+        .expression.box,
+        .answer.box {
+          padding: 8px 16px;
           text-overflow: ellipsis;
+          &:hover {
+            background-color: #515151;
+          }
+          &:active {
+            background-color: #5b5b5b;
+          }
         }
       }
 
