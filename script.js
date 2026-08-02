@@ -77,6 +77,10 @@ function contains(term, chars) {
 
 //  ---  History Panel  ---
 
+function updateHistory() {
+  
+}
+
 
 
 //  ---  Calculation  ---
