@@ -100,7 +100,7 @@ function updateHistory() {
     const ansBox = document.createElement("p");
     ansBox.classList.add("answer");
     ansBox.classList.add("box");
-    ansBox.textContent = calculatorHistory[i]["answer"].join(" ");
+    ansBox.textContent = calculatorHistory[i]["answer"];
 
     historyItem.appendChild(expBox);
     historyItem.appendChild(dividerBox);
@@ -117,12 +117,16 @@ history.addEventListener("mousedown", event => {
   let [item, idx] = target.parentElement.id.split("-")
 
   if (target.classList.contains("expression")) {
-    activeExpression = calculatorHistory[Number(idx)]["expression"]
-    input.dispatchEvent(new KeyboardEvent("keydown", {key: "r"}))
+    activeExpression = calculatorHistory[Number(idx)]["expression"].slice()
 
   } else if (target.classList.contains("answer")) {
-    console.log(idx)
-  }
+    const expLength  = activeExpression.length
+    const lastTerm   = activeExpression[expLength - 1]
+    const targetAnswer = calculatorHistory[Number(idx)]["answer"]
+    if (contains(lastTerm, operatorDisplay)) activeExpression.push(targetAnswer); 
+  };
+
+  input.dispatchEvent(new KeyboardEvent("keydown", {key: "r"}))
 });
 
 
@@ -142,7 +146,7 @@ function calculate(exp) {
 
   calculatorHistory.push({
     "expression": currentExp,
-    "answer": currentAnswer,
+    "answer": currentAnswer.join(),
   });
 
   updateHistory();
