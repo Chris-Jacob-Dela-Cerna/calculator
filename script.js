@@ -72,6 +72,7 @@ let calculatorHistory = [];
 //  ---  Utils  ---
 
 function contains(term, chars) {
+  if (activeExpression.length === 0) return false;
   let termChars = term.split("");
   return termChars.some(char => chars.includes(char));
 };
@@ -125,7 +126,8 @@ history.addEventListener("mousedown", event => {
     const expLength  = activeExpression.length
     const lastTerm   = activeExpression[expLength - 1]
     const targetAnswer = calculatorHistory[Number(idx)]["answer"]
-    if (contains(lastTerm, operatorDisplay)) activeExpression.push(targetAnswer); 
+    console.log(expLength)
+    if (contains(lastTerm, operatorDisplay) || expLength === 0) activeExpression.push(targetAnswer); 
   };
 
   input.dispatchEvent(new KeyboardEvent("keydown", {key: "r"}))
@@ -254,7 +256,7 @@ input.addEventListener("keydown", event => {
     case "ArrowUp":
       const historyLength = calculatorHistory.length
       const targetAnswer = calculatorHistory[historyLength - 1]["answer"]
-      if (contains(lastTerm, operatorDisplay)) activeExpression.push(targetAnswer);
+      if (contains(lastTerm, operatorDisplay) || expLength === 0) activeExpression.push(targetAnswer);
       break;
 
     // Move caret leftwards or to the front
