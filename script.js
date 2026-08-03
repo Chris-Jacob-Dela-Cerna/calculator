@@ -1,8 +1,9 @@
 
 //  ---  DOM References  ---
 
-const keypad = document.getElementById("calc-keypad");
+const history = document.getElementById("calc-history");
 const input = document.getElementById("input-box");
+const keypad = document.getElementById("calc-keypad");
 
 
 
@@ -63,7 +64,7 @@ const validKeys = [
 
 let caretOffset = 0;
 let expression = [];
-let history = {}
+let calcHistory = [];
 
 
 //  ---  Utils  ---
@@ -78,26 +79,58 @@ function contains(term, chars) {
 //  ---  History Panel  ---
 
 function updateHistory() {
-  
-}
+  history.replaceChildren()
+
+  for (let i = 0; i < calcHistory.length; i++) {
+    const historyItem = document.createElement("li");
+    if (i === 0) historyItem.classList.add("first");
+    historyItem.classList.add("item");
+
+    const expBox = document.createElement("p");
+    expBox.classList.add("expression");
+    expBox.classList.add("box");
+    expBox.textContent = calcHistory[i]["expression"].join(" ");
+
+    const dividerBox = document.createElement("p");
+    dividerBox.classList.add("divider");
+    dividerBox.classList.add("box");
+    dividerBox.textContent = "=";
+
+    const ansBox = document.createElement("p");
+    ansBox.classList.add("answer");
+    ansBox.classList.add("box");
+    ansBox.textContent = calcHistory[i]["answer"].join(" ");
+
+    historyItem.appendChild(expBox);
+    historyItem.appendChild(dividerBox);
+    historyItem.appendChild(ansBox);
+
+    history.appendChild(historyItem);
+  };
+};
 
 
 
 //  ---  Calculation  ---
 
 function calculate(exp) {
-  const previousExp = exp.slice()
+  const currentExp = exp.slice()
 
   const MD = ["×", "÷"];
   evaluate(exp, MD);
   const AS = ["+", "−"];
   evaluate(exp, AS);
 
-  if (previousExp.join("") === exp.join("")) return;
-  history.append({
-    "expression": previousExp,
-    "answer": exp,
+  const currentAnswer = exp.slice();
+
+  if (currentExp.join("") === currentAnswer.join("")) return;
+  console.log(currentExp)
+  console.log(exp)
+  calcHistory.push({
+    "expression": currentExp,
+    "answer": currentAnswer,
   });
+  updateHistory()
 };
 
 function evaluate(exp, operators) {
@@ -270,3 +303,9 @@ keypad.addEventListener("mousedown", event => {
   const key = new KeyboardEvent("keydown", {key: buttonToKey[id]})
   input.dispatchEvent(key);
 });
+
+
+
+//  ---  Initialization  ---
+
+updateHistory();
