@@ -118,6 +118,8 @@ history.addEventListener("mousedown", event => {
 
   if (target.classList.contains("expression")) {
     activeExpression = calculatorHistory[Number(idx)]["expression"]
+    input.dispatchEvent(new KeyboardEvent("keydown", {key: "r"}))
+
   } else if (target.classList.contains("answer")) {
     console.log(idx)
   }
@@ -282,6 +284,10 @@ input.addEventListener("keydown", event => {
       ) return;
       calculate(activeExpression);
       caretOffset = 0;
+      break;
+
+    // Refresh activeExpression
+    case "r":
       break;
 
     // Input keys
