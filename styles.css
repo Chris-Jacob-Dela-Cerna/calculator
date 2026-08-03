@@ -50,13 +50,17 @@ body {
         .link {
           border: 1px solid #e3e3e3;
           border-radius: 12px;
-          color: #f3f3f3;
           font-weight: 500;
           padding: 10px 20px;
-          text-decoration: none;
+          a {
+            color: #f3f3f3;;
+            text-decoration: none;
+          }
           &:hover {
             background-color: #e3e3e3;
-            color: #222222;
+            a {
+              color: #222222;
+            }
           }
           &:active {
             margin: 2px 0;
@@ -69,7 +73,9 @@ body {
           background-color: #268588;
           &:hover {
             background-color: #459b9e;
-            color: #fcfcfc;
+            a {
+              color: #fcfcfc;
+            }
           }
         }
       }
