@@ -48,7 +48,7 @@ const notationSymbols = [
 const operatorSymbols = [
   "*", "/", "+", "-",
 ];
-const expKeys = [].concat(numbers, notationSymbols, operatorSymbols)
+const expKeys = [].concat(numbers, notationSymbols, operatorSymbols);
 
 const operatorDisplay = [
   "×", "÷", "+", "−",
@@ -57,14 +57,13 @@ const validKeys = [
   "0", "1", "2", "3", "4", "5", 
   "6", "7", "8", "9", ".", "*", 
   "/", "+", "-", "_",
-  "Delete",    "Backspace", 
-  "Enter",     "ArrowUp",
-  "ArrowLeft", "ArrowRight",
+  "Delete",  "Backspace", "Enter", 
+  "ArrowUp", "ArrowLeft", "ArrowRight",
 ];
 
 let caretOffset = 0;
-let expression = [];
-let calcHistory = [];
+let activeExpression = [];
+let calculatorHistory = [];
 
 
 //  ---  Utils  ---
@@ -79,9 +78,9 @@ function contains(term, chars) {
 //  ---  History Panel  ---
 
 function updateHistory() {
-  history.replaceChildren()
+  history.replaceChildren();
 
-  for (let i = 0; i < calcHistory.length; i++) {
+  for (let i = 0; i < calculatorHistory.length; i++) {
     const historyItem = document.createElement("li");
     if (i === 0) historyItem.classList.add("first");
     historyItem.classList.add("item");
@@ -89,7 +88,7 @@ function updateHistory() {
     const expBox = document.createElement("p");
     expBox.classList.add("expression");
     expBox.classList.add("box");
-    expBox.textContent = calcHistory[i]["expression"].join(" ");
+    expBox.textContent = calculatorHistory[i]["expression"].join(" ");
 
     const dividerBox = document.createElement("p");
     dividerBox.classList.add("divider");
@@ -99,7 +98,7 @@ function updateHistory() {
     const ansBox = document.createElement("p");
     ansBox.classList.add("answer");
     ansBox.classList.add("box");
-    ansBox.textContent = calcHistory[i]["answer"].join(" ");
+    ansBox.textContent = calculatorHistory[i]["answer"].join(" ");
 
     historyItem.appendChild(expBox);
     historyItem.appendChild(dividerBox);
@@ -108,6 +107,11 @@ function updateHistory() {
     history.appendChild(historyItem);
   };
 };
+
+history.addEventListener("mousedown", event => {
+  const target = event.target
+  if (target.tagName !== "P" || target.classList.contains("divider")) return;
+});
 
 
 
@@ -122,14 +126,14 @@ function calculate(exp) {
   evaluate(exp, AS);
 
   const currentAnswer = exp.slice();
-  if (currentExp.join("") === currentAnswer.join("")) return;
+  if (currentExp.join(" ") === currentAnswer.join(" ")) return;
 
-  calcHistory.push({
+  calculatorHistory.push({
     "expression": currentExp,
     "answer": currentAnswer,
   });
 
-  updateHistory()
+  updateHistory();
 };
 
 function evaluate(exp, operators) {
@@ -168,9 +172,9 @@ function validateInput(key, expLength, lastTerm) {
   if (expLength === 0) {
     if (!(numbers.includes(key) || notationSymbols.includes(key))) return;  // Block if input is neither a number or notation
     if (key === "_") {
-      expression.push("-");
+      activeExpression.push("-");
     } else {
-      expression.push(key);
+      activeExpression.push(key);
     }
 
   } else if (expLength > 0) {
@@ -178,9 +182,9 @@ function validateInput(key, expLength, lastTerm) {
 
     if (numbers.includes(key)) {
       if (contains(lastTerm, operatorDisplay)) {
-        expression.push(key);
+        activeExpression.push(key);
       } else {
-        expression.splice(expLength - 1, 1, lastTerm + key);
+        activeExpression.splice(expLength - 1, 1, lastTerm + key);
       }
 
 
@@ -191,7 +195,7 @@ function validateInput(key, expLength, lastTerm) {
         lastTermChar === "."
       ) return;
 
-      expression.push(operatorToDisplay[key]);
+      activeExpression.push(operatorToDisplay[key]);
 
 
     } else if (notationSymbols.includes(key)) {
@@ -204,17 +208,17 @@ function validateInput(key, expLength, lastTerm) {
           ) return;
 
           const newInput = lastTerm + key;
-          expression.splice(expLength - 1, 1, newInput);
+          activeExpression.splice(expLength - 1, 1, newInput);
           break;
 
         case "_":
           if (!contains(lastTerm, operatorDisplay)) return;  // Block if last input is not an operator
-          expression.push("-");
+          activeExpression.push("-");
           break;
-      }
-    }
-  }
-}
+      };
+    };
+  };
+};
 
 input.addEventListener("keydown", event => {
   event.preventDefault();
@@ -223,8 +227,8 @@ input.addEventListener("keydown", event => {
   if (!validKeys.includes(key)) return;
 
   const target        = event.target;
-  const expLength     = expression.length
-  const lastTerm      = expression[expLength - 1]
+  const expLength     = activeExpression.length
+  const lastTerm      = activeExpression[expLength - 1]
   let   displayLength = target.value.length;
 
   switch (key) {
@@ -242,22 +246,22 @@ input.addEventListener("keydown", event => {
 
     // Delete latest input
     case "Backspace":
-      if (expression.length === 0) return;
-      if (lastTerm.length < 2) expression.pop();
+      if (activeExpression.length === 0) return;
+      if (lastTerm.length < 2) activeExpression.pop();
       else {
         const lastTermChars   = lastTerm.split("");
         lastTermChars.length -= 1;
-        expression.splice(expLength - 1, 1, lastTermChars.join(""))
+        activeExpression.splice(expLength - 1, 1, lastTermChars.join(""))
       }
       break;
 
-    // Delete entire expression
+    // Delete entire activeExpression
     case "Delete":
-      expression.length = 0;
+      activeExpression.length = 0;
       caretOffset       = 0;
       break;
 
-    // Compute expression
+    // Compute activeExpression
     case "Enter":
       if (expLength === 0) return;
       const lastTermChar = lastTerm.slice(lastTerm.length - 1)
@@ -266,7 +270,7 @@ input.addEventListener("keydown", event => {
         lastTermChar === "-"                     || // Block if last character is - or .
         lastTermChar === "."
       ) return;
-      calculate(expression);
+      calculate(activeExpression);
       caretOffset = 0;
       break;
 
@@ -278,7 +282,7 @@ input.addEventListener("keydown", event => {
   };
 
   // Constuct input display
-  target.value = expression.join(" ");
+  target.value = activeExpression.join(" ");
 
   // Follow caret movement
   displayLength = target.value.length;
