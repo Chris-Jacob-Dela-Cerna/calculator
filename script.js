@@ -250,6 +250,13 @@ input.addEventListener("keydown", event => {
   let   displayLength = target.value.length;
 
   switch (key) {
+    // Add previous answer to the expression after an operation
+    case "ArrowUp":
+      const historyLength = calculatorHistory.length
+      const targetAnswer = calculatorHistory[historyLength - 1]["answer"]
+      if (contains(lastTerm, operatorDisplay)) activeExpression.push(targetAnswer);
+      break;
+
     // Move caret leftwards or to the front
     case "ArrowLeft":
       if (caretOffset === displayLength) caretOffset = 0;
@@ -270,7 +277,7 @@ input.addEventListener("keydown", event => {
         const lastTermChars   = lastTerm.split("");
         lastTermChars.length -= 1;
         activeExpression.splice(expLength - 1, 1, lastTermChars.join(""))
-      }
+      };
       break;
 
     // Delete entire activeExpression
@@ -289,7 +296,7 @@ input.addEventListener("keydown", event => {
         lastTermChar === "."
       ) return;
       calculate(activeExpression);
-      historyContainer.scrollTop = historyContainer.scrollHeight
+      historyContainer.scrollTop = historyContainer.scrollHeight;
       caretOffset = 0;
       break;
 
