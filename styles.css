@@ -14,9 +14,66 @@ body {
   min-height: 100vh;
 
   .about-container {
-    border: 1px solid grey;
-
+    display: flex;
     flex: 3 0 360px;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 64px;
+
+    .about {      
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      .header {
+        color: #e8e8e8;
+        font-size: 48px;
+        margin: 0;
+      }
+
+      .paragraph {
+        color: #e3e3e3;
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        .link {
+          border: 1px solid #e3e3e3;
+          border-radius: 12px;
+          color: #f3f3f3;
+          font-weight: 500;
+          padding: 10px 20px;
+          text-decoration: none;
+          &:hover {
+            background-color: #e3e3e3;
+            color: #222222;
+          }
+          &:active {
+            margin: 2px 0;
+            padding: 8px 20px;
+          }
+        }
+
+        .source.link {
+          border: 0;
+          background-color: #268588;
+          &:hover {
+            background-color: #459b9e;
+            color: #fcfcfc;
+          }
+        }
+      }
+    }
   }
 
   .calculator-container {
