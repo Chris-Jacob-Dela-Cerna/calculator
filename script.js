@@ -122,14 +122,13 @@ function calculate(exp) {
   evaluate(exp, AS);
 
   const currentAnswer = exp.slice();
-
   if (currentExp.join("") === currentAnswer.join("")) return;
-  console.log(currentExp)
-  console.log(exp)
+
   calcHistory.push({
     "expression": currentExp,
     "answer": currentAnswer,
   });
+
   updateHistory()
 };
 
