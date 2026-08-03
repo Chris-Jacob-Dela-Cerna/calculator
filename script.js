@@ -2,8 +2,8 @@
 //  ---  DOM References  ---
 
 const history = document.getElementById("calc-history");
-const input = document.getElementById("input-box");
-const keypad = document.getElementById("calc-keypad");
+const input   = document.getElementById("input-box");
+const keypad  = document.getElementById("calc-keypad");
 
 
 
@@ -59,10 +59,11 @@ const validKeys = [
   "/", "+", "-", "_",
   "Delete",  "Backspace", "Enter", 
   "ArrowUp", "ArrowLeft", "ArrowRight",
+  "r",
 ];
 
-let caretOffset = 0;
-let activeExpression = [];
+let caretOffset       = 0;
+let activeExpression  = [];
 let calculatorHistory = [];
 
 
@@ -84,6 +85,7 @@ function updateHistory() {
     const historyItem = document.createElement("li");
     if (i === 0) historyItem.classList.add("first");
     historyItem.classList.add("item");
+    historyItem.id = `item-${i}`
 
     const expBox = document.createElement("p");
     expBox.classList.add("expression");
@@ -109,8 +111,16 @@ function updateHistory() {
 };
 
 history.addEventListener("mousedown", event => {
-  const target = event.target
+  const target = event.target;
   if (target.tagName !== "P" || target.classList.contains("divider")) return;
+
+  let [item, idx] = target.parentElement.id.split("-")
+
+  if (target.classList.contains("expression")) {
+    activeExpression = calculatorHistory[Number(idx)]["expression"]
+  } else if (target.classList.contains("answer")) {
+    console.log(idx)
+  }
 });
 
 
@@ -258,7 +268,7 @@ input.addEventListener("keydown", event => {
     // Delete entire activeExpression
     case "Delete":
       activeExpression.length = 0;
-      caretOffset       = 0;
+      caretOffset             = 0;
       break;
 
     // Compute activeExpression
