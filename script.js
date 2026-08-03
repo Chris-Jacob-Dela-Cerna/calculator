@@ -5,6 +5,8 @@ const history = document.getElementById("calc-history");
 const input   = document.getElementById("input-box");
 const keypad  = document.getElementById("calc-keypad");
 
+const historyContainer = document.querySelector(".history-panel");
+
 
 
 //  ---  Configs  ---
@@ -287,6 +289,7 @@ input.addEventListener("keydown", event => {
         lastTermChar === "."
       ) return;
       calculate(activeExpression);
+      historyContainer.scrollTop = historyContainer.scrollHeight
       caretOffset = 0;
       break;
 
